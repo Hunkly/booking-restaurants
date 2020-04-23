@@ -32,6 +32,29 @@ app.get('/getData',urlencodedParser, function (req, res) {
   });
 });
 
+app.get('/users',urlencodedParser, function (req, res) {
+  fs.readFile("users.json", "utf8", function(error,data)
+  {
+    if(error) throw error; // если возникла ошибка
+    console.log('Users',JSON.parse(data));
+    res.send(JSON.parse(data))
+  });
+});
+
+app.post('/login',urlencodedParser, function (req, res) {
+  if (!req.body) return res.sendStatus(400);
+  console.log('BODY', req.body);
+  fs.writeFile("users.json", JSON.stringify(req.body), function (error, data) {
+    if (error) throw error; // если возникла ошибка
+    console.log("Асинхронная запись файла завершена. Содержимое файла:");
+    fs.readFile("users.json", "utf8", function (error, data) {
+      if (error) throw error; // если возникла ошибка
+      console.log('Bookings ', JSON.parse(data));
+      res.send(JSON.parse(data));
+    });
+  });
+});
+
 app.post('/setData',urlencodedParser, function(req, res, next) {
   if(!req.body) return res.sendStatus(400);
   console.log('BODY',req.body);
